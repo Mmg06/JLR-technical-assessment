@@ -27,5 +27,5 @@ jobs:
       env:
         GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
       run: |
-        docker build . -t gcr.io/${{ env.GCP_PROJECT }}/JLR-interview/my-app:${{ github.sha }}
-        docker push gcr.io/${{ env.GCP_PROJECT }}/JLR-interview/my-app:${{ github.sha }}
+        docker build . -t gcr.io/${{ env.GCP_PROJECT }}/sales-data-pipeline/my-app:${{ github.sha }}
+        docker push gcr.io/${{ env.GCP_PROJECT }}/sales-data-pipeline/my-app:${{ github.sha }}

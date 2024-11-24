@@ -2,3 +2,12 @@ numpy
 requests
 gitpython
 pandas
+apache-airflow
+google-cloud-storage
+google-cloud-bigquery
+pyyaml
+pylint
+pylint-exit
+anybadge
+pytest
+pytest-cov

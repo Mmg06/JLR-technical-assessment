@@ -85,9 +85,9 @@ jobs:
         env:
           GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
         run: |
-          docker build . -t gcr.io/${{ env.GCP_PROJECT }}/sales-data-pipeline/my-app:${{ github.sha }}
-          docker tag gcr.io/${{ env.GCP_PROJECT }}/sales-data-pipeline/my-app:${{ github.sha }} gcr.io/${{ env.GCP_PROJECT }}/sales-data-pipeline/my-app:latest
-          docker tag gcr.io/${{ env.GCP_PROJECT }}/sales-data-pipeline/my-app:${{ github.sha }} gcr.io/${{ env.GCP_PROJECT }}/sales-data-pipeline/my-app:${{ env.VERSION }}
+          docker build . -t europe-west2-docker.pkg.dev/${{ env.GCP_PROJECT }}/car-sales-pipeline/my-app:${{ github.sha }}
+          docker tag europe-west2-docker.pkg.dev/${{ env.GCP_PROJECT }}/car-sales-pipeline/my-app:${{ github.sha }} europe-west2-docker.pkg.dev/${{ env.GCP_PROJECT }}/car-sales-pipeline/my-app:latest
+          docker tag europe-west2-docker.pkg.dev/${{ env.GCP_PROJECT }}/car-sales-pipeline/my-app:${{ github.sha }} europe-west2-docker.pkg.dev/${{ env.GCP_PROJECT }}/car-sales-pipeline/my-app:${{ env.VERSION }}
 
       - name: Push Docker image
         env:

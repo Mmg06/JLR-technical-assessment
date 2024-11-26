@@ -4,7 +4,7 @@ from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import Kubernete
 from airflow.utils.dates import days_ago
 
 # Bucket for environment data (update this with your GCS bucket if needed)
-env_bucket = "europe-west2-khoa-tutorial--0291703f-bucket"
+env_bucket = ""
 
 # Default arguments for the DAG
 default_args = {

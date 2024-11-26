@@ -126,7 +126,7 @@ def main():
         # Step 2: Enrich the dataset
         enriched_df = enrich_dataset(base_df, options_df)
 
-        # Step 3: Save the enriched DataFrame locally (optional)
+        # Step 3: Save the enriched DataFrame locally 
         local_csv = "enriched_dataset_local.csv"
         enriched_df.to_csv(local_csv, index=False)
         logging.info(f"Enriched dataset saved locally to {local_csv}")

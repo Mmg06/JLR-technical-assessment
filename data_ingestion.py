@@ -1,74 +1,38 @@
-from google.cloud import bigquery
+from google.cloud import storage
 import logging
-from concurrent.futures import ThreadPoolExecutor
-import time
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
-def load_csv_from_gcs(dataset_id, table_id, gcs_uri, project_id=None):
-    """Loads CSV data from GCS into BigQuery."""
-    client = bigquery.Client(project=project_id)
+def upload_to_gcs(bucket_name, source_file_name, destination_blob_name):
+    """
+    Uploads a file to a GCS bucket.
 
-    # Defining the dataset and table in BigQuery
-    table_ref = client.dataset(dataset_id).table(table_id)
-
-    # Loading the data
-    job_config = bigquery.LoadJobConfig(
-        source_format=bigquery.SourceFormat.CSV,
-        autodetect=True,  
-        skip_leading_rows=1,
-        max_bad_records=5,  
-        allow_quoted_newlines=True  
-    )
-
+    :param bucket_name: Name of the GCS bucket
+    :param source_file_name: Local path to the file
+    :param destination_blob_name: Name for the file in the bucket
+    """
     try:
-        # Load the data from GCS to BigQuery
-        load_job = client.load_table_from_uri(gcs_uri, table_ref, job_config=job_config)
+        # Initialize the GCS client
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(bucket_name)
+        blob = bucket.blob(destination_blob_name)
 
-        # Wait for the job to complete
-        load_job.result()
-        logging.info(f"Successfully loaded {gcs_uri} into {dataset_id}.{table_id}")
-
+        # Upload the file
+        logging.info(f"Uploading {source_file_name} to {bucket_name}/{destination_blob_name}...")
+        blob.upload_from_filename(source_file_name)
+        logging.info(f"File {source_file_name} uploaded to {bucket_name}/{destination_blob_name}.")
     except Exception as e:
-        logging.error(f"Failed to load {gcs_uri} into {dataset_id}.{table_id}: {e}")
+        logging.error(f"Failed to upload {source_file_name} to {bucket_name}: {e}")
 
+# Configuration
+BUCKET_NAME = "car-sales-data-1"  # Replace with your GCS bucket name
+FILES = [
+    {"source": "base_data.csv", "destination": "base_data.csv"},
+    {"source": "options_data.csv", "destination": "options_data.csv"},
+    {"source": "vehicle_line_mapping.csv", "destination": "vehicle_mapping.csv"},
+]
 
-def load_multiple_files_in_parallel(file_list, dataset_id, project_id, max_workers=3):
-    """Loads multiple CSV files into BigQuery tables in parallel."""
-    start_time = time.time()
-
-    # Use ThreadPoolExecutor for parallelism
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = []
-        for file_info in file_list:
-            future = executor.submit(
-                load_csv_from_gcs,
-                dataset_id,
-                file_info['table_id'],
-                file_info['gcs_uri'],
-                project_id
-            )
-            futures.append(future)
-
-        # Wait for all jobs to complete
-        for future in futures:
-            future.result()
-
-    elapsed_time = time.time() - start_time
-    logging.info(f"All files loaded in {elapsed_time:.2f} seconds.")
-
-
-if __name__ == "__main__":
-    dataset_id = "vehicle_analysis"  
-    project_id = "jlr-interview-435215"  
-
-    # List of files to ingest
-    files_to_ingest = [
-        {"table_id": "base_data", "gcs_uri": "gs://vehicle-inventory/Base_data.csv.csv"},
-        {"table_id": "options_data", "gcs_uri": "gs://vehicle-inventory/options_data.csv"},
-        {"table_id": "vehicle_line_mapping", "gcs_uri": "gs://vehicle-inventory/vehicle_line_mapping.csv"}
-    ]
-
-    # Ingest files in parallel
-    load_multiple_files_in_parallel(files_to_ingest, dataset_id, project_id, max_workers=3)
+# Upload each file
+for file in FILES:
+    upload_to_gcs(BUCKET_NAME, file["source"], file["destination"])

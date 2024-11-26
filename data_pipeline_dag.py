@@ -3,7 +3,7 @@ from airflow import DAG
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from airflow.utils.dates import days_ago
 
-# Bucket for environment data (update this with your GCS bucket if needed)
+# Bucket for GCS bucket
 env_bucket = ""
 
 # Default arguments for the DAG
@@ -21,7 +21,7 @@ with DAG(
     dag_id="data_pipeline_dag",
     default_args=default_args,
     description="Data pipeline DAG for JLR sales data",
-    schedule_interval=None,  # Set to None for manual runs
+    schedule_interval=None,  # None for manual runs
     start_date=days_ago(1),
     tags=["Data_pipeline"],
     catchup=False,

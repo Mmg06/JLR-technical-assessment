@@ -9,7 +9,7 @@ def load_to_bigquery(bucket_name, file_name, dataset_id, table_id):
     Load a CSV file from GCS into BigQuery.
 
     :param bucket_name: GCS bucket name
-    :param file_name: GCS file name (e.g., "enriched_dataset.csv")
+    :param file_name: GCS file name 
     :param dataset_id: BigQuery dataset ID
     :param table_id: BigQuery table ID
     """
@@ -21,7 +21,7 @@ def load_to_bigquery(bucket_name, file_name, dataset_id, table_id):
         job_config = bigquery.LoadJobConfig(
             source_format=bigquery.SourceFormat.CSV,
             skip_leading_rows=1,  # Skip header row
-            autodetect=True,  # Automatically detect schema
+            autodetect=True,  # Automatically detects schema
         )
 
         table_ref = f"{client.project}.{dataset_id}.{table_id}"

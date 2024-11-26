@@ -26,7 +26,7 @@ def upload_to_gcs(bucket_name, source_file_name, destination_blob_name):
         logging.error(f"Failed to upload {source_file_name} to {bucket_name}: {e}")
 
 # Configuration
-BUCKET_NAME = "car-sales-data-1"  # Replace with your GCS bucket name
+BUCKET_NAME = "car-sales-data-1" 
 FILES = [
     {"source": "base_data.csv", "destination": "base_data.csv"},
     {"source": "options_data.csv", "destination": "options_data.csv"},

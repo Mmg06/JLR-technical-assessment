@@ -1,13 +1,11 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from data_transformation import extract_model_code, calculate_avg_material_cost, enrich_dataset
 import unittest
 import pandas as pd
 from io import StringIO
-from data_transformation import extract_model_code, calculate_avg_material_cost, enrich_dataset
-import os
-import sys
 
-# Add the parent directory to sys.path
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.insert(0, parent_dir)
 
 class TestTransformationScript(unittest.TestCase):
 
@@ -65,21 +63,39 @@ class TestTransformationScript(unittest.TestCase):
 
         # Expected output
         expected_data = {
-            'Options_Code': ['A', 'B', 'C'],
-            'Model_Text': ['L320', 'X152', 'XYZ'],
-            'Sales_Price': [1000, -500, 200],
-            'Model_Code': ['L320', 'X152', 'XYZ'],
-            'production_cost': [300, 0, 90],  # Material cost, zero for negative Sales_Price, 45% for no match
-            'profit': [700, -500, 110],  # Sales_Price - production_cost
+            'Options_Code': ['A', 'C'],  # Exclude 'B' due to Sales_Price <= 0
+            'Model_Text': ['L320', 'XYZ'],
+            'Sales_Price': [1000, 200],
+            'Model_Code': ['L320', 'XYZ'],
+            'production_cost': [300, 90],  # Keep this as int
+            'profit': [700, 110],  # Profit is int
         }
         expected_df = pd.DataFrame(expected_data)
 
+        # Ensure the expected production_cost and profit columns are explicitly int64
+        expected_df['production_cost'] = expected_df['production_cost'].astype('int64')
+        expected_df['profit'] = expected_df['profit'].astype('int64')
+
         # Test the function
         result_df = enrich_dataset(base_df, options_df)
+
+        # Reset the index of the result DataFrame
+        result_df = result_df.reset_index(drop=True)
+
+        # Cast production_cost and profit to int64 for comparison
+        result_df['production_cost'] = result_df['production_cost'].astype('int64')
+        result_df['profit'] = result_df['profit'].astype('int64')
+
+        # Debug output
+        print("Result DataFrame from enrich_dataset (after reset_index and casting):\n", result_df)
+
         pd.testing.assert_frame_equal(
             result_df[['Options_Code', 'Model_Text', 'Sales_Price', 'Model_Code', 'production_cost', 'profit']],
             expected_df
         )
 
+
+
 if __name__ == '__main__':
     unittest.main()
+

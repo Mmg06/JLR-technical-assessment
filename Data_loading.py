@@ -30,11 +30,10 @@ def load_to_bigquery(bucket_name, file_name, dataset_id, table_id):
         # Trigger the load job
         load_job = client.load_table_from_uri(uri, table_ref, job_config=job_config)
         load_job.result()  # Wait for the job to complete
-
         logging.info(f"Data successfully loaded into BigQuery table {table_ref}.")
     except Exception as e:
         logging.error(f"Error loading data into BigQuery: {e}")
-        raise
+        
 
 # Example usage
 if __name__ == "__main__":

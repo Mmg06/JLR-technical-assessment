@@ -33,6 +33,7 @@ FILES = [
     {"source": "vehicle_line_mapping.csv", "destination": "vehicle_mapping.csv"},
 ]
 
+
 # Upload each file
 for file in FILES:
     upload_to_gcs(BUCKET_NAME, file["source"], file["destination"])

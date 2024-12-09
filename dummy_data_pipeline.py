@@ -22,7 +22,6 @@ with DAG(
     catchup=False,
     tags=["dummy_pipeline"],
 ) as dag:
-
     # Task 1: Start
     Data_ingestion = DummyOperator(task_id="Data_ingestion")
 

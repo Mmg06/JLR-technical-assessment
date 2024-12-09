@@ -47,22 +47,34 @@ jobs:
 
 
   test:
-    name: Run Tests (Placeholder)
+    name: Run Transformation Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Create Placeholder Test Results
-        run: |
-          mkdir -p reports
-          echo "<testsuite name='PlaceholderTests'><testcase classname='Placeholder' name='DummyTest'/></testsuite>" > reports/test-results.xml
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
 
-      - name: Upload Placeholder Test Results
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+
+      - name: Run transformation tests
+        run: |
+          source venv/bin/activate
+          python -m unittest tests/test_transformation.py
+
+      - name: Upload Test Results
         uses: actions/upload-artifact@v3
         with:
-          name: test-results
-          path: reports/test-results.xml
+          name: transformation-test-results
+          path: test-results.xml
 
   build-and-push:
    name: Build and Push Docker Image
